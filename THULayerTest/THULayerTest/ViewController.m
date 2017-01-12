@@ -18,6 +18,7 @@
 @property (nonatomic, strong) CALayer *shipLayer;
 @property (nonatomic, strong) UIBezierPath *bezierPath;
 @property (nonatomic, strong) CAAnimationGroup *groupAnimation;
+@property (nonatomic, strong) UIView *coverView;
 @end
 
 @implementation ViewController
@@ -26,8 +27,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testKeyFrame];
 }
+
+
+
 
 - (void)testKeyFrame {
     //create a path
@@ -75,9 +78,47 @@
     
     
 }
+
+- (void)testCustomTransition {
+    //preserve the current view snapshot
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, YES, 0.0);
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *coverImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    self.coverView = [[UIImageView alloc] initWithImage:coverImage];
+    self.coverView.frame = self.view.bounds;
+    [self.view addSubview:self.coverView];
+    
+    //update the view (we'll simply randomize the layer background color)
+    CGFloat red = arc4random() / (CGFloat)INT_MAX;
+    CGFloat green = arc4random() / (CGFloat)INT_MAX;
+    CGFloat blue = arc4random() / (CGFloat)INT_MAX;
+    self.view.backgroundColor = [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+}
+
 - (IBAction)change:(UIButton *)sender {
     //add the animation to the color layer
-    [self.shipLayer addAnimation:self.groupAnimation forKey:nil];
+    //perform animation (anything you like)
+    if (!self.coverView.superview) {
+        self.coverView.alpha = 1;
+        [self.view addSubview:self.coverView];
+        CGAffineTransform transform = CGAffineTransformMakeScale(1, 1);
+        self.coverView.transform = transform;
+        CGFloat red = arc4random() / (CGFloat)INT_MAX;
+        CGFloat green = arc4random() / (CGFloat)INT_MAX;
+        CGFloat blue = arc4random() / (CGFloat)INT_MAX;
+        self.view.backgroundColor = [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+    }
+    [UIView animateWithDuration:1.0 animations:^{
+        //scale, rotate and fade the view
+        CGAffineTransform transform = CGAffineTransformMakeScale(0.01, 0.01);
+        transform = CGAffineTransformRotate(transform, M_PI_2);
+        self.coverView.transform = transform;
+        self.coverView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        //remove the cover view now we're finished with it
+        [self.coverView removeFromSuperview];
+    }];
 }
 
 
