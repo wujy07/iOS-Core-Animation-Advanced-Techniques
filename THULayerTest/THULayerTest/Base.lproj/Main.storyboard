@@ -35,7 +35,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <action selector="change:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Dbm-E2-4gz"/>
+                                    <action selector="change:" destination="BYZ-38-t0r" eventType="touchUpInside" id="g8m-aK-Btw"/>
                                 </connections>
                             </button>
                         </subviews>
